@@ -22,8 +22,11 @@ public class CacheSvc
         }
     }
 
+    private DBMgr dbMgr = null;
+
     public void Init()
     {
+        dbMgr = DBMgr.Instance;
         PECommon.Log("CacheSvc Init Done");
     }
 
@@ -43,9 +46,8 @@ public class CacheSvc
     /// <returns></returns>
     public PlayerData GetPlayerData(string acct, string pass)
     {
-        // TODO
         // 从数据库查找
-        return null;
+        return dbMgr.QueryPlayerData(acct, pass);
     }
 
     /// <summary>
@@ -58,5 +60,27 @@ public class CacheSvc
     {
         onlineAcctDic.Add(acct, session);
         onlineSessionDic.Add(session, playerData);
+    }
+
+    public bool IsNameExist(string name)
+    {
+        return dbMgr.QueryNameData(name);
+    }
+
+    public PlayerData GetPlayerDataBySession(ServerSession session)
+    {
+        if (onlineSessionDic.TryGetValue(session, out PlayerData playerData))
+        {
+            return playerData;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public bool UpdatePlayerData(int id, PlayerData playerData)
+    { 
+        return dbMgr.UpdatePlayerData(id, playerData);
     }
 }

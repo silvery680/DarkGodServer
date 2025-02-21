@@ -24,7 +24,7 @@ public class LoginSys
     }
 
     private CacheSvc cacheSvc = null;
-    
+
     public void Init()
     {
         cacheSvc = CacheSvc.Instance;
@@ -62,6 +62,43 @@ public class LoginSys
                 };
                 // 缓存账号数据
                 cacheSvc.AcctOnline(data.acct, pack.session, pd);
+            }
+        }
+
+        // 回应客户端
+        pack.session.SendMsg(msg);
+    }
+
+    public void ReqRename(MsgPack pack)
+    {
+        ReqRename data = pack.msg.reqRename;
+        GameMsg msg = new GameMsg
+        {
+            cmd = (int)CMD.RspRename,
+        };
+
+        // 名字是否存在
+        if (cacheSvc.IsNameExist(data.name))
+        {
+            msg.err = (int)ErrorCode.NameIsExist;
+        }
+        else
+        {
+            // 不存在，更新缓存和数据库，再返回给客户端
+            PlayerData playerData = cacheSvc.GetPlayerDataBySession(pack.session);
+            playerData.name = data.name;
+
+            // 数据更新失败
+            if (cacheSvc.UpdatePlayerData(playerData.id, playerData))
+            {
+                msg.rspRename = new RspRename
+                {
+                    name = data.name
+                };
+            }
+            else
+            {
+                msg.err = (int)ErrorCode.UpdateDBError;
             }
         }
 

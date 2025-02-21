@@ -22,6 +22,7 @@ class ServerRoot
     public void Init()
     {
         // 数据层TODO
+        DBMgr.Instance.Init();
 
         // 服务层
         CacheSvc.Instance.Init();
