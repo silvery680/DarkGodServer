@@ -105,5 +105,10 @@ public class LoginSys
         // 回应客户端
         pack.session.SendMsg(msg);
     }
+
+    public void ClearOfflineData(ServerSession session)
+    {
+        cacheSvc.AcctOffline(session);
+    }
 }
 
