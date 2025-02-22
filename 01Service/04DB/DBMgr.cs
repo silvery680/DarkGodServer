@@ -56,12 +56,20 @@ public class DBMgr
                     {
                         id = reader.GetInt32("id"),
                         name = reader.GetString("id"),
-                        lv = reader.GetInt32("lv"),
+                        lv = reader.GetInt32("level"),
                         exp = reader.GetInt32("exp"),
                         power = reader.GetInt32("power"),
                         coin = reader.GetInt32("coin"),
-                        diamond = reader.GetInt32("diamond")
+                        diamond = reader.GetInt32("diamond"),
 
+                        hp = reader.GetInt32("hp"),
+                        ad = reader.GetInt32("ad"),
+                        ap = reader.GetInt32("ap"),
+                        addef = reader.GetInt32("addef"),
+                        apdef = reader.GetInt32("apdef"),
+                        dodge = reader.GetInt32("dodge"),
+                        pierce = reader.GetInt32("pierce"),
+                        critical = reader.GetInt32("critical")
                         // TOADD
                     };
                 }
@@ -97,10 +105,21 @@ public class DBMgr
             power = 150,
             coin = 5000,
             diamond = 500,
+
+            hp = 2000,
+            ad = 275,
+            ap = 265,
+            addef = 67,
+            apdef = 43,
+            dodge = 7,
+            pierce = 5,
+            critical = 2,
         };
         try
         {
-            MySqlCommand insertCmd = new MySqlCommand(@"insert into account set acct=@acct,pass =@pass,name=@name,level=@level,exp=@exp,power=@power,coin=@coin,diamond=@diamond", conn);
+            MySqlCommand insertCmd = new MySqlCommand(@"insert into account set "
+                + @"acct=@acct,pass =@pass,name=@name,level=@level,exp=@exp,power=@power,coin=@coin,diamond=@diamond,"
+                + @"hp = @hp, ad = @ad, ap = @ap, addef = @addef, apdef = @apdef,dodge = @dodge, pierce = @pierce, critical = @critical", conn);
             insertCmd.Parameters.AddWithValue("acct", acct);
             insertCmd.Parameters.AddWithValue("pass", pass);
             insertCmd.Parameters.AddWithValue("name", newPlayerData.name);
@@ -109,6 +128,15 @@ public class DBMgr
             insertCmd.Parameters.AddWithValue("power", newPlayerData.power);
             insertCmd.Parameters.AddWithValue("coin", newPlayerData.coin);
             insertCmd.Parameters.AddWithValue("diamond", newPlayerData.diamond);
+
+            insertCmd.Parameters.AddWithValue("hp", newPlayerData.hp);
+            insertCmd.Parameters.AddWithValue("ad", newPlayerData.ad);
+            insertCmd.Parameters.AddWithValue("ap", newPlayerData.ap);
+            insertCmd.Parameters.AddWithValue("addef", newPlayerData.addef);
+            insertCmd.Parameters.AddWithValue("apdef", newPlayerData.apdef);
+            insertCmd.Parameters.AddWithValue("dodge", newPlayerData.dodge);
+            insertCmd.Parameters.AddWithValue("pierce", newPlayerData.pierce);
+            insertCmd.Parameters.AddWithValue("critical", newPlayerData.critical);
 
             insertCmd.ExecuteNonQuery();
             newPlayerData.id = (int)insertCmd.LastInsertedId;
@@ -163,6 +191,11 @@ public class DBMgr
             updateCmd.Parameters.AddWithValue("power", playerData.power);
             updateCmd.Parameters.AddWithValue("coin", playerData.coin);
             updateCmd.Parameters.AddWithValue("diamond", playerData.diamond);
+
+            updateCmd.Parameters.AddWithValue("apdef", playerData.apdef);
+            updateCmd.Parameters.AddWithValue("dodge", playerData.dodge);
+            updateCmd.Parameters.AddWithValue("pierce", playerData.pierce);
+            updateCmd.Parameters.AddWithValue("critical", playerData.critical);
 
             //TOADD Others
             updateCmd.ExecuteNonQuery();
