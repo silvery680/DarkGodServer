@@ -69,7 +69,9 @@ public class DBMgr
                         apdef = reader.GetInt32("apdef"),
                         dodge = reader.GetInt32("dodge"),
                         pierce = reader.GetInt32("pierce"),
-                        critical = reader.GetInt32("critical")
+                        critical = reader.GetInt32("critical"),
+
+                        guideID = reader.GetInt32("guideid")
                         // TOADD
                     };
                 }
@@ -114,12 +116,16 @@ public class DBMgr
             dodge = 7,
             pierce = 5,
             critical = 2,
+
+            guideID = 1001,
         };
         try
         {
-            MySqlCommand insertCmd = new MySqlCommand(@"insert into account set "
+            MySqlCommand insertCmd = new MySqlCommand(
+                  @"insert into account set "
                 + @"acct=@acct,pass =@pass,name=@name,level=@level,exp=@exp,power=@power,coin=@coin,diamond=@diamond,"
-                + @"hp = @hp, ad = @ad, ap = @ap, addef = @addef, apdef = @apdef,dodge = @dodge, pierce = @pierce, critical = @critical", conn);
+                + @"hp = @hp, ad = @ad, ap = @ap, addef = @addef, apdef = @apdef,dodge = @dodge, pierce = @pierce, critical = @critical," 
+                + @"guideid = @guideid", conn);
             insertCmd.Parameters.AddWithValue("acct", acct);
             insertCmd.Parameters.AddWithValue("pass", pass);
             insertCmd.Parameters.AddWithValue("name", newPlayerData.name);
@@ -137,6 +143,8 @@ public class DBMgr
             insertCmd.Parameters.AddWithValue("dodge", newPlayerData.dodge);
             insertCmd.Parameters.AddWithValue("pierce", newPlayerData.pierce);
             insertCmd.Parameters.AddWithValue("critical", newPlayerData.critical);
+
+            insertCmd.Parameters.AddWithValue("guideid", newPlayerData.guideID);
 
             insertCmd.ExecuteNonQuery();
             newPlayerData.id = (int)insertCmd.LastInsertedId;
@@ -183,7 +191,10 @@ public class DBMgr
         {
             //更新玩家数据
             MySqlCommand updateCmd = new MySqlCommand(
-            "update account set name=@name,level=@level,exp=@exp,power=@power,coin=@coin,diamond=@diamond where id =@id", conn);
+              @"update account set name=@name,level=@level,exp=@exp,power=@power,coin=@coin,diamond=@diamond," 
+            + @"hp = @hp, ad = @ad, ap = @ap, addef = @addef, apdef = @apdef,dodge = @dodge, pierce = @pierce, critical = @critical,"
+            + @"guideid = @guideid"
+            + @" where id =@id", conn);
             updateCmd.Parameters.AddWithValue("id", id);
             updateCmd.Parameters.AddWithValue("name", playerData.name);
             updateCmd.Parameters.AddWithValue("level", playerData.lv);
@@ -192,11 +203,16 @@ public class DBMgr
             updateCmd.Parameters.AddWithValue("coin", playerData.coin);
             updateCmd.Parameters.AddWithValue("diamond", playerData.diamond);
 
+            updateCmd.Parameters.AddWithValue("hp", playerData.hp);
+            updateCmd.Parameters.AddWithValue("ad", playerData.ad);
+            updateCmd.Parameters.AddWithValue("ap", playerData.ap);
+            updateCmd.Parameters.AddWithValue("addef", playerData.addef);
             updateCmd.Parameters.AddWithValue("apdef", playerData.apdef);
             updateCmd.Parameters.AddWithValue("dodge", playerData.dodge);
             updateCmd.Parameters.AddWithValue("pierce", playerData.pierce);
             updateCmd.Parameters.AddWithValue("critical", playerData.critical);
 
+            updateCmd.Parameters.AddWithValue("guideid", playerData.guideID);
             //TOADD Others
             updateCmd.ExecuteNonQuery();
         }
