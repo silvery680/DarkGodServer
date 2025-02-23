@@ -55,7 +55,7 @@ public class DBMgr
                     playerData = new PlayerData
                     {
                         id = reader.GetInt32("id"),
-                        name = reader.GetString("id"),
+                        name = reader.GetString("name"),
                         lv = reader.GetInt32("level"),
                         exp = reader.GetInt32("exp"),
                         power = reader.GetInt32("power"),
