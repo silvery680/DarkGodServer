@@ -61,6 +61,7 @@ public class DBMgr
                         power = reader.GetInt32("power"),
                         coin = reader.GetInt32("coin"),
                         diamond = reader.GetInt32("diamond"),
+                        crystal = reader.GetInt32("crystal"),
 
                         hp = reader.GetInt32("hp"),
                         ad = reader.GetInt32("ad"),
@@ -74,6 +75,26 @@ public class DBMgr
                         guideID = reader.GetInt32("guideid")
                         // TOADD
                     };
+                    #region strong
+                    string[] strongStrArr = reader.GetString("strong").Split('#');
+                    int[] _strongArr = new int[6];
+                    for (int i = 0; i < strongStrArr.Length; i++)
+                    {
+                        if (strongStrArr[i] == "")
+                        {
+                            continue;
+                        }
+                        if (int.TryParse(strongStrArr[i], out int starLv))
+                        {
+                            _strongArr[i] = starLv;
+                        }
+                        else
+                        {
+                            PECommon.Log("Parse Strong Data Error", LogType.Error);
+                        }
+                    }
+                    playerData.strongArr = _strongArr; 
+                    #endregion
                 }
             }
         }
@@ -107,6 +128,7 @@ public class DBMgr
             power = 150,
             coin = 5000,
             diamond = 500,
+            crystal = 1000,
 
             hp = 2000,
             ad = 275,
@@ -118,14 +140,15 @@ public class DBMgr
             critical = 2,
 
             guideID = 1001,
+            strongArr = new int[6],
         };
         try
         {
             MySqlCommand insertCmd = new MySqlCommand(
                   @"insert into account set "
-                + @"acct=@acct,pass =@pass,name=@name,level=@level,exp=@exp,power=@power,coin=@coin,diamond=@diamond,"
+                + @"acct=@acct,pass =@pass,name=@name,level=@level,exp=@exp,power=@power,coin=@coin,diamond=@diamond, crystal = @crystal, "
                 + @"hp = @hp, ad = @ad, ap = @ap, addef = @addef, apdef = @apdef,dodge = @dodge, pierce = @pierce, critical = @critical," 
-                + @"guideid = @guideid", conn);
+                + @"guideid = @guideid, strong = @strong", conn);
             insertCmd.Parameters.AddWithValue("acct", acct);
             insertCmd.Parameters.AddWithValue("pass", pass);
             insertCmd.Parameters.AddWithValue("name", newPlayerData.name);
@@ -134,6 +157,7 @@ public class DBMgr
             insertCmd.Parameters.AddWithValue("power", newPlayerData.power);
             insertCmd.Parameters.AddWithValue("coin", newPlayerData.coin);
             insertCmd.Parameters.AddWithValue("diamond", newPlayerData.diamond);
+            insertCmd.Parameters.AddWithValue("crystal", newPlayerData.crystal);
 
             insertCmd.Parameters.AddWithValue("hp", newPlayerData.hp);
             insertCmd.Parameters.AddWithValue("ad", newPlayerData.ad);
@@ -146,6 +170,16 @@ public class DBMgr
 
             insertCmd.Parameters.AddWithValue("guideid", newPlayerData.guideID);
 
+            #region strong
+            string strongInfo = "";
+            for (int i = 0; i < newPlayerData.strongArr.Length; i++)
+            {
+                strongInfo += newPlayerData.strongArr[i];
+                strongInfo += "#";
+            }
+            insertCmd.Parameters.AddWithValue("strong", strongInfo); 
+            #endregion
+
             insertCmd.ExecuteNonQuery();
             newPlayerData.id = (int)insertCmd.LastInsertedId;
         }
@@ -157,7 +191,7 @@ public class DBMgr
         return newPlayerData;
     }
 
-    public  bool QueryNameData(string name)
+    public bool QueryNameData(string name)
     {
         bool isExist = false;
         MySqlDataReader reader = null;
@@ -191,9 +225,9 @@ public class DBMgr
         {
             //更新玩家数据
             MySqlCommand updateCmd = new MySqlCommand(
-              @"update account set name=@name,level=@level,exp=@exp,power=@power,coin=@coin,diamond=@diamond," 
+              @"update account set name=@name,level=@level,exp=@exp,power=@power,coin=@coin,diamond=@diamond, crystal = @crystal," 
             + @"hp = @hp, ad = @ad, ap = @ap, addef = @addef, apdef = @apdef,dodge = @dodge, pierce = @pierce, critical = @critical,"
-            + @"guideid = @guideid"
+            + @"guideid = @guideid, strong = @strong"
             + @" where id =@id", conn);
             updateCmd.Parameters.AddWithValue("id", id);
             updateCmd.Parameters.AddWithValue("name", playerData.name);
@@ -202,6 +236,7 @@ public class DBMgr
             updateCmd.Parameters.AddWithValue("power", playerData.power);
             updateCmd.Parameters.AddWithValue("coin", playerData.coin);
             updateCmd.Parameters.AddWithValue("diamond", playerData.diamond);
+            updateCmd.Parameters.AddWithValue("crystal", playerData.crystal);
 
             updateCmd.Parameters.AddWithValue("hp", playerData.hp);
             updateCmd.Parameters.AddWithValue("ad", playerData.ad);
@@ -213,6 +248,16 @@ public class DBMgr
             updateCmd.Parameters.AddWithValue("critical", playerData.critical);
 
             updateCmd.Parameters.AddWithValue("guideid", playerData.guideID);
+
+            #region strong
+            string strongInfo = "";
+            for (int i = 0; i < playerData.strongArr.Length; i++)
+            {
+                strongInfo += playerData.strongArr[i];
+                strongInfo += "#";
+            }
+            updateCmd.Parameters.AddWithValue("strong", strongInfo);
+            #endregion
             //TOADD Others
             updateCmd.ExecuteNonQuery();
         }
