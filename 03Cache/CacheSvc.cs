@@ -67,6 +67,11 @@ public class CacheSvc
         return dbMgr.QueryNameData(name);
     }
 
+    /// <summary>
+    /// 从指定链接获取玩家数据
+    /// </summary>
+    /// <param name="session"></param>
+    /// <returns></returns>
     public PlayerData GetPlayerDataBySession(ServerSession session)
     {
         if (onlineSessionDic.TryGetValue(session, out PlayerData playerData))
@@ -79,6 +84,12 @@ public class CacheSvc
         }
     }
 
+    /// <summary>
+    /// 更新玩家数据
+    /// </summary>
+    /// <param name="id">玩家id</param>
+    /// <param name="playerData">新数据</param>
+    /// <returns></returns>
     public bool UpdatePlayerData(int id, PlayerData playerData)
     { 
         return dbMgr.UpdatePlayerData(id, playerData);
@@ -101,5 +112,15 @@ public class CacheSvc
 
         bool succ = onlineSessionDic.Remove(session);
         PECommon.Log("Offline Result: Session ID:" + session.sessionID + " Success");
+    }
+
+    public List<ServerSession> GetOnlineServerSessions()
+    {
+        List<ServerSession> lst = new List<ServerSession>();
+        foreach (var item in onlineSessionDic)
+        {
+            lst.Add(item.Key);
+        }
+        return lst;
     }
 }

@@ -84,6 +84,9 @@ public class NetSvc
             case CMD.ReqStrong:
                 StrongSys.Instance.ReqStrong(pack);
                 break;
+            case CMD.SndChat:
+                ChatSys.Instance.SndChat(pack);
+                break;
         }
     }
 }
