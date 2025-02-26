@@ -5,6 +5,8 @@
 	Description: 服务器入口
 *********************************************************************/
 
+using System.Threading;
+
 class ServerStart
 {
     static void Main(string[] args)
@@ -14,6 +16,7 @@ class ServerStart
         while (true)
         {
             ServerRoot.Instance.Update();
+            Thread.Sleep(20);
         }
     }
 }

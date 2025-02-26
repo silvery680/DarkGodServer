@@ -43,7 +43,7 @@ public class CacheSvc
     /// </summary>
     /// <param name="acct">账号</param>
     /// <param name="pass">密码</param>
-    /// <returns></returns>
+    /// <returns>玩家数据</returns>
     public PlayerData GetPlayerData(string acct, string pass)
     {
         // 从数据库查找
@@ -71,7 +71,7 @@ public class CacheSvc
     /// 从指定链接获取玩家数据
     /// </summary>
     /// <param name="session"></param>
-    /// <returns></returns>
+    /// <returns>玩家数据</returns>
     public PlayerData GetPlayerDataBySession(ServerSession session)
     {
         if (onlineSessionDic.TryGetValue(session, out PlayerData playerData))
@@ -85,11 +85,20 @@ public class CacheSvc
     }
 
     /// <summary>
+    /// 获取所有缓存字典信息
+    /// </summary>
+    /// <returns>缓存字典</returns>
+    public Dictionary<ServerSession, PlayerData> GetOnlineCache()
+    {
+        return onlineSessionDic;
+    }
+
+    /// <summary>
     /// 更新玩家数据
     /// </summary>
     /// <param name="id">玩家id</param>
     /// <param name="playerData">新数据</param>
-    /// <returns></returns>
+    /// <returns>成功与否</returns>
     public bool UpdatePlayerData(int id, PlayerData playerData)
     { 
         return dbMgr.UpdatePlayerData(id, playerData);

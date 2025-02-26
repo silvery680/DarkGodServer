@@ -72,7 +72,9 @@ public class DBMgr
                         pierce = reader.GetInt32("pierce"),
                         critical = reader.GetInt32("critical"),
 
-                        guideID = reader.GetInt32("guideid")
+                        guideID = reader.GetInt32("guideid"),
+                        loginTime = reader.GetInt64("loginTime"),
+
                         // TOADD
                     };
                     #region strong
@@ -141,6 +143,7 @@ public class DBMgr
 
             guideID = 1001,
             strongArr = new int[6],
+            loginTime = TimeSvc.Instance.GetNowTime(),
         };
         try
         {
@@ -148,7 +151,7 @@ public class DBMgr
                   @"insert into account set "
                 + @"acct=@acct,pass =@pass,name=@name,level=@level,exp=@exp,power=@power,coin=@coin,diamond=@diamond, crystal = @crystal, "
                 + @"hp = @hp, ad = @ad, ap = @ap, addef = @addef, apdef = @apdef,dodge = @dodge, pierce = @pierce, critical = @critical," 
-                + @"guideid = @guideid, strong = @strong", conn);
+                + @"guideid = @guideid, strong = @strong, loginTime = @loginTime", conn);
             insertCmd.Parameters.AddWithValue("acct", acct);
             insertCmd.Parameters.AddWithValue("pass", pass);
             insertCmd.Parameters.AddWithValue("name", newPlayerData.name);
@@ -169,6 +172,7 @@ public class DBMgr
             insertCmd.Parameters.AddWithValue("critical", newPlayerData.critical);
 
             insertCmd.Parameters.AddWithValue("guideid", newPlayerData.guideID);
+            insertCmd.Parameters.AddWithValue("loginTime", newPlayerData.loginTime);
 
             #region strong
             string strongInfo = "";
@@ -227,7 +231,7 @@ public class DBMgr
             MySqlCommand updateCmd = new MySqlCommand(
               @"update account set name=@name,level=@level,exp=@exp,power=@power,coin=@coin,diamond=@diamond, crystal = @crystal," 
             + @"hp = @hp, ad = @ad, ap = @ap, addef = @addef, apdef = @apdef,dodge = @dodge, pierce = @pierce, critical = @critical,"
-            + @"guideid = @guideid, strong = @strong"
+            + @"guideid = @guideid, strong = @strong, loginTime = @loginTime"
             + @" where id =@id", conn);
             updateCmd.Parameters.AddWithValue("id", id);
             updateCmd.Parameters.AddWithValue("name", playerData.name);
@@ -248,6 +252,7 @@ public class DBMgr
             updateCmd.Parameters.AddWithValue("critical", playerData.critical);
 
             updateCmd.Parameters.AddWithValue("guideid", playerData.guideID);
+            updateCmd.Parameters.AddWithValue("loginTime", playerData.loginTime);
 
             #region strong
             string strongInfo = "";

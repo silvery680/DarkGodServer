@@ -24,10 +24,12 @@ public class LoginSys
     }
 
     private CacheSvc cacheSvc = null;
+    private TimeSvc timeSvc = null;
 
     public void Init()
     {
         cacheSvc = CacheSvc.Instance;
+        timeSvc = TimeSvc.Instance;
         PECommon.Log("LoginSys Init Done.");
     }
 
@@ -56,6 +58,9 @@ public class LoginSys
             }
             else
             {
+                // 计算离线体力增长
+                CalcPowerIncrease(ref pd);
+
                 msg.rspLogin = new RspLogin
                 {
                     playerData = pd
@@ -108,7 +113,44 @@ public class LoginSys
 
     public void ClearOfflineData(ServerSession session)
     {
+        // 写入下线时间
+        PlayerData pd = cacheSvc.GetPlayerDataBySession(session);
+        if (pd != null)
+        {
+            pd.loginTime = timeSvc.GetNowTime();
+            if (!cacheSvc.UpdatePlayerData(pd.id, pd))
+            {
+                PECommon.Log("Update offline time error", LogType.Error);
+            }
+        }
+
         cacheSvc.AcctOffline(session);
+    }
+
+    public void CalcPowerIncrease(ref PlayerData pd)
+    {
+        int power = pd.power;
+        long currentTime = timeSvc.GetNowTime();
+        long milliseconds = currentTime - pd.loginTime;
+        int addPower = (int)(milliseconds / (1000 * 60 * PECommon.PowerAddSapce)) * PECommon.PowerAddCount;
+        if (addPower > 0)
+        {
+            int powerMax = PECommon.GetPowerLimit(pd.lv);
+            // 时间更新双保险
+            pd.loginTime = timeSvc.GetNowTime();
+            if (pd.power + addPower < powerMax)
+            {
+                pd.power = pd.power + addPower;
+            }
+            else
+            {
+                pd.power = powerMax;
+            }
+            if (power != pd.power)
+            {
+                cacheSvc.UpdatePlayerData(pd.id, pd);
+            }
+        }
     }
 }
 
