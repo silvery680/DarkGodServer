@@ -30,7 +30,7 @@ public class PowerSys
         cacheSvc = CacheSvc.Instance;
 
         // TO Change
-        TimeSvc.Instance.AddTimeTask(CalcPowerAdd, PECommon.PowerAddSapce, PETimeUnit.Second, 0);
+        TimeSvc.Instance.AddTimeTask(CalcPowerAdd, PECommon.PowerAddSapce, PETimeUnit.Minute, 0);
         PECommon.Log("PowerSys Init Done.");
     }
 

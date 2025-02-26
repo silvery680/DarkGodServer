@@ -28,6 +28,7 @@ public class CfgSvc
     {
         InitGuideCfg();
         InitStrongCfg();
+        InitTaskRewardCfg();
         PECommon.Log("CfgSvc Init Done.");
     }
 
@@ -188,9 +189,83 @@ public class CfgSvc
         return sc;
     }
     #endregion
+
+    #region 任务奖励配置
+    private Dictionary<int, TaskRewardCfg> taskRewardCfgDic = new Dictionary<int, TaskRewardCfg>();
+    private void InitTaskRewardCfg()
+    {
+        XmlDocument doc = new XmlDocument();
+        doc.Load(@"D:\UnityProjects\DarkGod\Assets\Resources\ResCfgs\taskreward.xml");
+
+        XmlNodeList nodeList = doc.SelectSingleNode("root").ChildNodes;
+
+        foreach (XmlElement ele in nodeList)
+        {
+            if (ele.GetAttributeNode("ID") == null)
+            {
+                continue;
+            }
+
+            int _ID = Convert.ToInt32(ele.GetAttributeNode("ID").InnerText);
+            TaskRewardCfg trc = new TaskRewardCfg()
+            {
+                ID = _ID
+            };
+
+
+            foreach (XmlElement e in ele.ChildNodes)
+            {
+                switch (e.Name)
+                {
+                    case "count":
+                        {
+                            trc.count = int.Parse(e.InnerText);
+                        }
+                        break;
+                    case "exp":
+                        {
+                            trc.exp = int.Parse(e.InnerText);
+                        }
+                        break;
+                    case "coin":
+                        {
+                            trc.coin = int.Parse(e.InnerText);
+                        }
+                        break;
+                }
+            }
+
+            taskRewardCfgDic.Add(_ID, trc);
+        }
+        PECommon.Log("TaskRewardCfg Load Done.");
+    }
+
+    public TaskRewardCfg GetTaskRewardCfg(int id)
+    {
+        TaskRewardCfg data = null;
+        if (taskRewardCfgDic.TryGetValue(id, out data))
+        {
+            return data;
+        }
+        return null;
+    }
+    #endregion
 }
 
 #region 数据格式定义
+public class TaskRewardCfg : BaseData<TaskRewardCfg>
+{
+    public int count;
+    public int exp;
+    public int coin;
+}
+
+public class TaskRewardData : BaseData<TaskRewardData>
+{
+    public int prgs;
+    public bool taked;
+}
+
 public class StrongCfg : BaseData<StrongCfg>
 {
     public int pos;

@@ -74,9 +74,30 @@ public class DBMgr
 
                         guideID = reader.GetInt32("guideid"),
                         loginTime = reader.GetInt64("loginTime"),
-
+                        
                         // TOADD
                     };
+
+                    #region task
+                    // 数据示意 : 1|1|0#2|1|0#3|1|0#
+                    string[] taskStrArr = reader.GetString("task").Split('#');
+                    playerData.taskArr = new string[6];
+                    for (int i = 0; i < taskStrArr.Length; i++)
+                    {
+                        if (taskStrArr[i] == "")
+                        {
+                            continue;
+                        }
+                        else if(taskStrArr[i].Length >= 5)
+                        {
+                            playerData.taskArr[i] = taskStrArr[i];
+                        }
+                        else
+                        {
+                            throw new Exception("DataError");
+                        }
+                    }
+                    #endregion
                     #region strong
                     string[] strongStrArr = reader.GetString("strong").Split('#');
                     int[] _strongArr = new int[6];
@@ -144,6 +165,7 @@ public class DBMgr
             guideID = 1001,
             strongArr = new int[6],
             loginTime = TimeSvc.Instance.GetNowTime(),
+            taskArr = new string[6],
         };
         try
         {
@@ -151,7 +173,7 @@ public class DBMgr
                   @"insert into account set "
                 + @"acct=@acct,pass =@pass,name=@name,level=@level,exp=@exp,power=@power,coin=@coin,diamond=@diamond, crystal = @crystal, "
                 + @"hp = @hp, ad = @ad, ap = @ap, addef = @addef, apdef = @apdef,dodge = @dodge, pierce = @pierce, critical = @critical," 
-                + @"guideid = @guideid, strong = @strong, loginTime = @loginTime", conn);
+                + @"guideid = @guideid, strong = @strong, loginTime = @loginTime, task = @task", conn);
             insertCmd.Parameters.AddWithValue("acct", acct);
             insertCmd.Parameters.AddWithValue("pass", pass);
             insertCmd.Parameters.AddWithValue("name", newPlayerData.name);
@@ -174,6 +196,20 @@ public class DBMgr
             insertCmd.Parameters.AddWithValue("guideid", newPlayerData.guideID);
             insertCmd.Parameters.AddWithValue("loginTime", newPlayerData.loginTime);
 
+            #region task
+            // 1|0|1#2|1|0
+            string taskInfo = "";
+            for (int i = 0; i < newPlayerData.taskArr.Length; i ++)
+            {
+                newPlayerData.taskArr[i] = (i + 1) + "|0|0";
+            }
+            for (int i = 0; i < newPlayerData.taskArr.Length; i++)
+            {
+                taskInfo += newPlayerData.taskArr[i];
+                taskInfo += "#";
+            }
+            insertCmd.Parameters.AddWithValue("task", taskInfo);
+            #endregion
             #region strong
             string strongInfo = "";
             for (int i = 0; i < newPlayerData.strongArr.Length; i++)
@@ -231,7 +267,7 @@ public class DBMgr
             MySqlCommand updateCmd = new MySqlCommand(
               @"update account set name=@name,level=@level,exp=@exp,power=@power,coin=@coin,diamond=@diamond, crystal = @crystal," 
             + @"hp = @hp, ad = @ad, ap = @ap, addef = @addef, apdef = @apdef,dodge = @dodge, pierce = @pierce, critical = @critical,"
-            + @"guideid = @guideid, strong = @strong, loginTime = @loginTime"
+            + @"guideid = @guideid, strong = @strong, loginTime = @loginTime, task = @task"
             + @" where id =@id", conn);
             updateCmd.Parameters.AddWithValue("id", id);
             updateCmd.Parameters.AddWithValue("name", playerData.name);
@@ -253,6 +289,16 @@ public class DBMgr
 
             updateCmd.Parameters.AddWithValue("guideid", playerData.guideID);
             updateCmd.Parameters.AddWithValue("loginTime", playerData.loginTime);
+
+            #region MyRegion
+            string taskInfo = "";
+            for (int i = 0; i < playerData.taskArr.Length; i++)
+            {
+                taskInfo += playerData.taskArr[i];
+                taskInfo += "#";
+            }
+            updateCmd.Parameters.AddWithValue("task", taskInfo);
+            #endregion
 
             #region strong
             string strongInfo = "";
