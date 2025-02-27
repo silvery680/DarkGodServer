@@ -32,6 +32,7 @@ public class CacheSvc
 
     private Dictionary<string, ServerSession> onlineAcctDic = new Dictionary<string, ServerSession>();
     private Dictionary<ServerSession, PlayerData> onlineSessionDic = new Dictionary<ServerSession, PlayerData>();
+    private Dictionary<int, ServerSession> onlineIDDic = new Dictionary<int, ServerSession>();
 
     public bool IsAcctOnline(string acct)
     {
@@ -60,6 +61,7 @@ public class CacheSvc
     {
         onlineAcctDic.Add(acct, session);
         onlineSessionDic.Add(session, playerData);
+        onlineIDDic.Add(playerData.id, session);
     }
 
     public bool IsNameExist(string name)
@@ -110,6 +112,7 @@ public class CacheSvc
     /// <param name="session">连接</param>
     public void AcctOffline(ServerSession session)
     {
+        onlineIDDic.Remove(onlineSessionDic[session].id);
         foreach (var item in onlineAcctDic)
         {
             if (item.Value == session)
@@ -131,5 +134,10 @@ public class CacheSvc
             lst.Add(item.Key);
         }
         return lst;
+    }
+
+    public ServerSession GetOnlineServerSessionByID(int ID)
+    {
+        return onlineIDDic[ID];
     }
 }

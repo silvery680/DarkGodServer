@@ -47,11 +47,16 @@ public class GuideSys
         // 更新引导ID, 如果错误就是客户端和服务器信息不同步
         if (pd.guideID == data.guideid)
         {
+            // 检测是否为智者点播任务
+            if (pd.guideID == 1001)
+            {
+                TaskSys.Instance.CalcTaskPrgs(pd, 1);
+            }
             pd.guideID += 1;
 
             // 更新玩家数据
             gc.coin += gc.coin;
-            CalcExp(ref pd, gc.exp);
+            PECommon.CalcExp(ref pd, gc.exp);
 
             if (!cacheSvc.UpdatePlayerData(pd.id, pd))
             {
@@ -75,31 +80,4 @@ public class GuideSys
         pack.session.SendMsg(msg);
     }
 
-    /// <summary>
-    /// 获得经验值后，计算经验和等级
-    /// </summary>
-    /// <param name="pd">玩家数据</param>
-    /// <param name="addExp">获得的经验值</param>
-    private void CalcExp(ref PlayerData pd, int addExp)
-    {
-        int curtLv = pd.lv;
-        int curtExp = pd.exp;
-        int addRestExp = addExp;
-        while (true)
-        {
-            int upNeedExp = PECommon.GetExpUpValByLv(curtLv) - curtExp;
-            if (addRestExp >= upNeedExp)
-            {
-                curtLv += 1;
-                curtExp = 0;
-                addRestExp -= upNeedExp;
-            }
-            else
-            {
-                pd.lv = curtLv;
-                pd.exp = curtExp + addRestExp;
-                break;
-            }
-        }
-    }
 }
