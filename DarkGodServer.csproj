@@ -46,6 +46,7 @@
     <Compile Include="02System\04ChatSys\ChatSys.cs" />
     <Compile Include="02System\05BuySys\BuySys.cs" />
     <Compile Include="02System\06PowerSys\PowerSys.cs" />
+    <Compile Include="02System\07FubenSys\FubenSys.cs" />
     <Compile Include="02System\TaskSys.cs" />
     <Compile Include="03Cache\CacheSvc.cs" />
     <Compile Include="04DB\DBMgr.cs" />

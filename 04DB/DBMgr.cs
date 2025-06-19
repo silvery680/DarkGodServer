@@ -74,7 +74,7 @@ public class DBMgr
 
                         guideID = reader.GetInt32("guideid"),
                         loginTime = reader.GetInt64("loginTime"),
-                        mission = reader.GetInt32("mission"),
+                        fuben = reader.GetInt32("fuben"),
                         // TOADD
                     };
 
@@ -166,7 +166,7 @@ public class DBMgr
             strongArr = new int[6],
             loginTime = TimeSvc.Instance.GetNowTime(),
             taskArr = new string[6],
-            mission = 10001,
+            fuben = 10001,
         };
         try
         {
@@ -174,7 +174,7 @@ public class DBMgr
                   @"insert into account set "
                 + @"acct=@acct,pass =@pass,name=@name,level=@level,exp=@exp,power=@power,coin=@coin,diamond=@diamond, crystal = @crystal, "
                 + @"hp = @hp, ad = @ad, ap = @ap, addef = @addef, apdef = @apdef,dodge = @dodge, pierce = @pierce, critical = @critical," 
-                + @"guideid = @guideid, strong = @strong, loginTime = @loginTime, task = @task, mission = @mission", conn);
+                + @"guideid = @guideid, strong = @strong, loginTime = @loginTime, task = @task, fuben = @fuben", conn);
             insertCmd.Parameters.AddWithValue("acct", acct);
             insertCmd.Parameters.AddWithValue("pass", pass);
             insertCmd.Parameters.AddWithValue("name", newPlayerData.name);
@@ -196,7 +196,7 @@ public class DBMgr
 
             insertCmd.Parameters.AddWithValue("guideid", newPlayerData.guideID);
             insertCmd.Parameters.AddWithValue("loginTime", newPlayerData.loginTime);
-            insertCmd.Parameters.AddWithValue("mission", newPlayerData.mission);
+            insertCmd.Parameters.AddWithValue("fuben", newPlayerData.fuben);
 
             #region task
             // 1|0|1#2|1|0
@@ -269,7 +269,7 @@ public class DBMgr
             MySqlCommand updateCmd = new MySqlCommand(
               @"update account set name=@name,level=@level,exp=@exp,power=@power,coin=@coin,diamond=@diamond, crystal = @crystal," 
             + @"hp = @hp, ad = @ad, ap = @ap, addef = @addef, apdef = @apdef,dodge = @dodge, pierce = @pierce, critical = @critical,"
-            + @"guideid = @guideid, strong = @strong, loginTime = @loginTime, task = @task, mission = @mission"
+            + @"guideid = @guideid, strong = @strong, loginTime = @loginTime, task = @task, fuben = @fuben"
             + @" where id =@id", conn);
             updateCmd.Parameters.AddWithValue("id", id);
             updateCmd.Parameters.AddWithValue("name", playerData.name);
@@ -291,7 +291,7 @@ public class DBMgr
 
             updateCmd.Parameters.AddWithValue("guideid", playerData.guideID);
             updateCmd.Parameters.AddWithValue("loginTime", playerData.loginTime);
-            updateCmd.Parameters.AddWithValue("mission", playerData.mission);
+            updateCmd.Parameters.AddWithValue("fuben", playerData.fuben);
 
             #region MyRegion
             string taskInfo = "";

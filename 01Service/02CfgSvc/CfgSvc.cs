@@ -29,6 +29,7 @@ public class CfgSvc
         InitGuideCfg();
         InitStrongCfg();
         InitTaskRewardCfg();
+        InitMapCfg();
         PECommon.Log("CfgSvc Init Done.");
     }
 
@@ -250,9 +251,65 @@ public class CfgSvc
         return null;
     }
     #endregion
+
+    #region 地图配置
+    private Dictionary<int, MapCfg> mapCfgDic = new Dictionary<int, MapCfg>();
+    private void InitMapCfg()
+    {
+        XmlDocument doc = new XmlDocument();
+        doc.Load(@"D:\UnityProjects\DarkGod\Assets\Resources\ResCfgs\map.xml");
+
+        XmlNodeList nodeList = doc.SelectSingleNode("root").ChildNodes;
+
+        foreach (XmlElement ele in nodeList)
+        {
+            if (ele.GetAttributeNode("ID") == null)
+            {
+                continue;
+            }
+
+            int _ID = Convert.ToInt32(ele.GetAttributeNode("ID").InnerText);
+            MapCfg mc = new MapCfg()
+            {
+                ID = _ID
+            };
+
+
+            foreach (XmlElement e in ele.ChildNodes)
+            {
+                switch (e.Name)
+                {
+                    case "power":
+                        {
+                            mc.power = int.Parse(e.InnerText);
+                        }
+                        break;
+                }
+            }
+
+            mapCfgDic.Add(_ID, mc);
+        }
+        PECommon.Log("MapCfg Load Done.");
+    }
+
+    public MapCfg GetMapCfg(int id)
+    {
+        MapCfg data = null;
+        if (mapCfgDic.TryGetValue(id, out data))
+        {
+            return data;
+        }
+        return null;
+    }
+    #endregion
 }
 
 #region 数据格式定义
+public class MapCfg : BaseData<MapCfg>
+{
+    public int power;
+}
+
 public class TaskRewardCfg : BaseData<TaskRewardCfg>
 {
     public int count;
